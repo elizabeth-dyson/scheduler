@@ -48,14 +48,17 @@ df = st.session_state["tasks_df"]
 
 # ---- Sidebar controls ----
 with st.sidebar:
+    st.caption("Now (app thinks):")
+    st.code(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
     st.header("Controls")
     if st.button("Reset checkboxes"):
         st.session_state["tasks_df"]["done"] = False
-        st.experimental_rerun()
+        st.rerun()
 
     if st.button("Mark all done"):
         st.session_state["tasks_df"]["done"] = True
-        st.experimental_rerun()
+        st.rerun()
 
     st.download_button(
         "Export as CSV",
@@ -77,10 +80,11 @@ st.write(f"**{completed} / {total}** tasks complete (**{pct}%**).")
 def is_now_in_slot(slot: str) -> bool:
     # slot like "10:00–10:20"
     try:
-        start_s, end_s = slot.split("–")
+        slot = slot.replace("–", "-")
+        start_s, end_s = [s.strip() for s in slot.split("-", 1)]
         today = datetime.now().date()
-        start = datetime.strptime(start_s.strip(), "%H:%M").replace(year=today.year, month=today.month, day=today.day)
-        end = datetime.strptime(end_s.strip(), "%H:%M").replace(year=today.year, month=today.month, day=today.day)
+        start = datetime.combine(today, datetime.strptime(start_s, "%H:%M").time())
+        end = datetime.combine(today, datetime.strptime(end_s, "%H:%M").time())
         now = datetime.now()
         return start <= now <= end
     except Exception:
