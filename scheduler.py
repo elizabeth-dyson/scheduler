@@ -2,6 +2,9 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import os
+os.environ["TZ"] = "America/Chicago"
+import time as _time; _time.tzset()
 
 st.set_page_config(page_title="Liz's No-Decisions Day", layout="wide")
 
