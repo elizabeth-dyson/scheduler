@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 os.environ["TZ"] = "America/Chicago"
 import time as _time; _time.tzset()
+import json
 
 st.set_page_config(page_title="Liz's No-Decisions Day", layout="wide")
 
@@ -37,13 +38,17 @@ DEFAULT_TASKS = [
     ("19:30–20:00", "Project: the other one / wrap-up"),
 ]
 
+SAVE_PATH = "progress.json"
+
 def init_state():
-    if "tasks_df" not in st.session_state:
+    if os.path.exists(SAVE_PATH):
+        with open(SAVE_PATH, "r") as f:
+            data = json.load(f)
+        df = pd.DataFrame(data)
+    else:
         df = pd.DataFrame(DEFAULT_TASKS, columns=["time", "task"])
         df["done"] = False
-        st.session_state["tasks_df"] = df
-    if "initialized_at" not in st.session_state:
-        st.session_state["initialized_at"] = datetime.now()
+    st.session_state["tasks_df"] = df
 
 init_state()
 
@@ -51,9 +56,6 @@ df = st.session_state["tasks_df"]
 
 # ---- Sidebar controls ----
 with st.sidebar:
-    st.caption("Now (app thinks):")
-    st.code(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
     st.header("Controls")
     if st.button("Reset checkboxes"):
         st.session_state["tasks_df"]["done"] = False
@@ -100,6 +102,8 @@ for i, row in df.iterrows():
     checked = st.checkbox(f"[{row['time']}] {row['task']}", value=bool(row["done"]), key=key)
     if checked != row["done"]:
         st.session_state["tasks_df"].at[i, "done"] = checked
+        with open(SAVE_PATH, "w") as f:
+            st.session_state["tasks_df"].to_json(f, orient="records")
 
     # Subtle highlight for current slot
     if is_now_in_slot(row["time"]):
