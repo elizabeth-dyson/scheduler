@@ -5,7 +5,6 @@ from datetime import datetime
 import os
 os.environ["TZ"] = "America/Chicago"
 import time as _time; _time.tzset()
-import json
 
 st.set_page_config(page_title="Liz's No-Decisions Day", layout="wide")
 
@@ -19,36 +18,35 @@ DEFAULT_TASKS = [
     ("10:20–10:40", "Dishes"),
     ("10:40–11:00", "Laundry → switch/dry + fold one load"),
     ("11:00–11:20", "Half bath clean"),
-    ("11:20–11:40", "Vacuum phase 2"),
     ("11:40–12:00", "Pay 2 credit cards"),
-    ("12:00–12:30", "Financial plan (weekly saving math)"),
-    ("12:30–13:00", "Walk Bo 🐾"),
-    ("13:00–13:30", "Lunch"),
-    ("13:30–14:00", "Master bath clean"),
     ("14:00–14:20", "Laundry → second load folded/put away"),
-    ("14:20–14:40", "Vacuum phase 3"),
-    ("14:40–15:00", "Fridge clean out"),
-    ("15:00–15:30", "Wash bed sheets + start dryer"),
-    ("15:30–16:00", "Easy name changes"),
-    ("16:00–16:30", "Put stuff in new bookshelf upstairs"),
-    ("16:30–17:00", "Errand → get drywall anchors"),
-    ("17:00–17:30", "Hang carpet remnants for cats 🐈"),
-    ("17:30–18:30", "Dinner + chill/reset"),
-    ("18:30–19:30", "Project: Sunflower site OR Coffee trailer"),
-    ("19:30–20:00", "Project: the other one / wrap-up"),
+    ("14:30–16:00", "Financial plan (weekly saving math)"),
+    ("16:00–16:20", "Vacuum phase 2"),
+    ("16:20–16:40", "Fridge clean out"),
+    ("16:40–17:30", "Project: Sunflower site OR Coffee trailer"),
+    ("17:30–17:45", "Feed Pets"),
+    ("17:45–19:00", "Project: the other one / wrap-up"),
+    ("19:00–19:30", "Dinner + chill/reset"),
+    ("19:30–20:00", "Walk Bo 🐾"),
 ]
 
-SAVE_PATH = "progress.json"
+## tasks for later
+# ("14:20–14:40", "Vacuum phase 3"),
+# ("13:30–14:00", "Master bath clean"),
+# ("15:00–15:30", "Wash bed sheets + start dryer"),
+# ("15:30–16:00", "Easy name changes"),
+# ("16:00–16:30", "Put stuff in new bookshelf upstairs"),
+# ("16:30–17:00", "Errand → get drywall anchors"),
+# ("17:00–17:30", "Hang carpet remnants for cats 🐈"),
+    
 
 def init_state():
-    if os.path.exists(SAVE_PATH):
-        with open(SAVE_PATH, "r") as f:
-            data = json.load(f)
-        df = pd.DataFrame(data)
-    else:
+    if "tasks_df" not in st.session_state:
         df = pd.DataFrame(DEFAULT_TASKS, columns=["time", "task"])
         df["done"] = False
-    st.session_state["tasks_df"] = df
+        st.session_state["tasks_df"] = df
+    if "initialized_at" not in st.session_state:
+        st.session_state["initialized_at"] = datetime.now()
 
 init_state()
 
@@ -102,8 +100,6 @@ for i, row in df.iterrows():
     checked = st.checkbox(f"[{row['time']}] {row['task']}", value=bool(row["done"]), key=key)
     if checked != row["done"]:
         st.session_state["tasks_df"].at[i, "done"] = checked
-        with open(SAVE_PATH, "w") as f:
-            st.session_state["tasks_df"].to_json(f, orient="records")
 
     # Subtle highlight for current slot
     if is_now_in_slot(row["time"]):
