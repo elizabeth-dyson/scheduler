@@ -6,6 +6,8 @@ import os
 os.environ["TZ"] = "America/Chicago"
 import time as _time; _time.tzset()
 import json
+import hashlib
+import re
 
 st.set_page_config(page_title="Liz's No-Decisions Day", layout="wide")
 
@@ -41,17 +43,52 @@ DEFAULT_TASKS = [
 # ("17:00–17:30", "Hang carpet remnants for cats 🐈"),
     
 
-SAVE_PATH = "progress.json"
+def normalize_task(s: str) -> str:
+    s = s.lower()
+    s = s.replace("–", "-")
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+def schedule_key(tasks):
+    only_tasks = sorted([normalize_task(t[1]) for t in tasks])
+    blob = json.dumps(only_tasks, ensure_ascii=False)
+    return hashlib.md5(blob.encode()).hexdigest()
+
+TODAY = datetime.now().strftime("%Y-%m-%d")
+SAVE_PATH = f"progress_{TODAY}.json"
+CURRENT_KEY = schedule_key(DEFAULT_TASKS)
 
 def init_state():
+    new_df = pd.DataFrame(DEFAULT_TASKS, columns=["time", "task"])
+    new_df["done"] = False
+
     if os.path.exists(SAVE_PATH):
         with open(SAVE_PATH, "r") as f:
             data = json.load(f)
-        df = pd.DataFrame(data)
-    else:
-        df = pd.DataFrame(DEFAULT_TASKS, columns=["time", "task"])
-        df["done"] = False
-    st.session_state["tasks_df"] = df
+        
+        if data.get("schedule_key") == CURRENT_KEY:
+            st.session_state["tasks_df"] = pd.DataFrame(data["tasks"])
+            return
+        
+        old_done_by_task = {}
+        for t in data["tasks"]:
+            old_done_by_task[normalize_task(t["task"])] = bool(t.get("done", False))
+        
+        new_df["done"] = [
+            old_done_by_task.get(normalize_task(row.task), False)
+            for row in new_df.itertuples()
+        ]
+
+    st.session_state["tasks_df"] = new_df
+
+def persist():
+    payload = {
+        "date": TODAY,
+        "schedule_key": CURRENT_KEY,
+        "tasks": st.session_state["tasks_df"].to_dict(orient="records"),
+    }
+    with open(SAVE_PATH, "w") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
 
 init_state()
 
@@ -62,10 +99,12 @@ with st.sidebar:
     st.header("Controls")
     if st.button("Reset checkboxes"):
         st.session_state["tasks_df"]["done"] = False
+        persist()
         st.rerun()
 
     if st.button("Mark all done"):
         st.session_state["tasks_df"]["done"] = True
+        persist()
         st.rerun()
 
     st.download_button(
@@ -105,8 +144,7 @@ for i, row in df.iterrows():
     checked = st.checkbox(f"[{row['time']}] {row['task']}", value=bool(row["done"]), key=key)
     if checked != row["done"]:
         st.session_state["tasks_df"].at[i, "done"] = checked
-        with open(SAVE_PATH, "w") as f:
-            st.session_state["tasks_df"].to_json(f, orient="records")
+        persist()
 
     # Subtle highlight for current slot
     if is_now_in_slot(row["time"]):
