@@ -17,26 +17,24 @@ st.caption("One conveyor belt. Zero decisions. Check the box and roll.")
 # ---- Define today's schedule (edit here) ----
 # Format: (time_range, task)
 DEFAULT_TASKS = [
-    ("9:30–9:45", "Vacuum phase 2"),
-    ("9:45–10:00", "Fridge clean out"),
-    ("10:00–10:15", "Sell Couch"),
-    ("10:15–10:30", "Wash bed sheets + start dryer"),
-    ("10:30–11:00", "Put stuff in new bookshelf"),
-    ("11:00–13:00", "Monthly Budgeting Flow"),
-    ("13:00–13:30", "Put away dryer + switch over sheets"),
-    ("13:30–13:50", "Vacuum phase 3"),
-    ("13:50–15:00", "Project: Sunflower site OR Coffee trailer"),
-    ("15:00–16:00", "Drywall anchors + groceries"),
-    ("16:00–17:00", "Hang carpet remnants"),
-    ("17:30–17:45", "Feed Pets"),
-    ("17:45–19:00", "Project: the other one / wrap-up"),
-    ("19:00–19:30", "Dinner + chill/reset"),
-    ("19:30–20:00", "Walk Bo 🐾"),
+    ("9:00–9:30", "Plan Day"),
+    ("9:30–10:00", "Get Ready"),
+    ("10:00–11:30", "Work Block"),
+    ("11:30–12:30", "Elena Gift"),
+    ("12:30–14:00", "Budgeting Block"),
+    ("14:00–16:30", "Work Block"),
+    ("16:30–17:00", "Litter Boxes"),
+    ("17:00–17:30", "Feed Pets"),
+    ("17:30–20:00", "Elena Birthday")
 ]
 
 ## tasks for later
 # ("13:30–14:00", "Master bath clean"),
 # ("15:30–16:00", "Easy name changes"),
+# ("10:30–11:00", "Put stuff in new bookshelf"),
+# ("13:30–13:50", "Vacuum phase 3"),
+# ("15:00–16:00", "Drywall anchors"),
+# ("16:00–17:00", "Hang carpet remnants"),
     
 
 def normalize_task(s: str) -> str:
