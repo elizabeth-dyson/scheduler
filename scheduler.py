@@ -17,24 +17,25 @@ st.caption("One conveyor belt. Zero decisions. Check the box and roll.")
 # ---- Define today's schedule (edit here) ----
 # Format: (time_range, task)
 DEFAULT_TASKS = [
-    ("9:00–9:30", "Plan Day"),
-    ("9:30–10:00", "Get Ready"),
-    ("10:00–11:30", "Work Block"),
-    ("11:30–12:30", "Elena Gift"),
-    ("12:30–14:00", "Budgeting Block"),
-    ("14:00–16:30", "Work Block"),
-    ("16:30–17:00", "Litter Boxes"),
+    ("8:00–8:30", "Clean Cat Fountain + New Filters"),
+    ("8:30–9:00", "Get Ready"),
+    ("9:00–9:45", "Dogs Drop In"),
+    ("10:30–12:00", "Budgeting Block"),
+    ("12:00–12:20", "Vacuum"),
+    ("12:20–13:00", "Get Drywall Anchors"),
+    ("13:00–14:00", "Hang Carpet Remnants"),
+    ("14:00–16:00", "Budgeting Block"),
+    ("16:00–17:00", "New Bookshelf"),
     ("17:00–17:30", "Feed Pets"),
-    ("17:30–20:00", "Elena Birthday")
+    ("17:30–17:45", "Carpet Cleaner"),
+    ("17:45–18:15", "Crochet"),
+    ("18:15–18:45", "Walk Bo + RTS Mail"),
+    ("18:45–19:30", "Do Nails"),
 ]
 
 ## tasks for later
 # ("13:30–14:00", "Master bath clean"),
 # ("15:30–16:00", "Easy name changes"),
-# ("10:30–11:00", "Put stuff in new bookshelf"),
-# ("13:30–13:50", "Vacuum phase 3"),
-# ("15:00–16:00", "Drywall anchors"),
-# ("16:00–17:00", "Hang carpet remnants"),
     
 
 def normalize_task(s: str) -> str:
