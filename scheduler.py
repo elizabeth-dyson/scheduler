@@ -18,13 +18,14 @@ st.caption("One conveyor belt. Zero decisions. Check the box and roll.")
 # Format: (time_range, task)
 DEFAULT_TASKS = [
     ("9:15–9:30", "Take Meds 💊"),
-    ("9:30–9:45", "Dishes 🍽️"),
+    ("9:30–9:40", "Dishes 🍽️"),
+    ("9:40–9:45", "Start Dryer"),
     ("9:45–10:00", "Vacuum 🌀"),
     ("10:00–10:30", "Litter Boxes 🐾"),
     ("10:30–11:15", "Get Drywall Anchors 🛠️"),
-    ("11:15–12:00", "Hang Carpet Remnants 🐈‍⬛"),
-    ("12:00–12:30", "Fill Bookshelf 📚"),
-    ("12:30–13:00", "Lunch Break"),
+    ("11:15–11:30", "Put Away Dryer"),
+    ("11:30–12:30", "Hang Carpet Remnants 🐈‍⬛"),
+    ("12:30–13:00", "Fill Bookshelf 📚"),
     ("13:00–13:30", "Grocery Pickup 🛒"),
     ("13:30–14:30", "Budgeting Block 💻"),
     ("14:30–15:00", "One Name Change 📝"),
